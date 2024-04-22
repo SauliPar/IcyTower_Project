@@ -76,6 +76,8 @@ public class PlayerManager : MonoBehaviour
         }
 
         text.text = "CLIMB";
+        LevelManager.Instance.StartLevel();
+            
         yield return new WaitForSeconds(1f);
 
         StartCoroutine(FadeCanvasGroup(0, 1f)); // Smoothly hide UI Again after countdown
