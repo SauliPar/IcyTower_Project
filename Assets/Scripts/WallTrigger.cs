@@ -12,7 +12,7 @@ public class WallTrigger : MonoBehaviour
         
         if (other.gameObject.CompareTag("Player"))
         {
-            Debug.Log("osuttiin seinään");
+            // Debug.Log("osuttiin seinään");
             var characterController = other.transform.GetComponent<CharacterController>();
             characterController.FlipHorizontalMove();
             _triggerCooldownOn = true;
