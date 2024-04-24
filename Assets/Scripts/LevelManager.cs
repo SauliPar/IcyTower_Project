@@ -11,11 +11,13 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private List<Transform> obstacleSpawnTransforms;
     [SerializeField] private GameObject obstacleWide;
 
-    // Added Features
     private bool _gameStarted = false;
     private float spawnInterval = 2.0f; // initial spawn interval
     private float speedIncreaseInterval = 10.0f; 
     private float obstacleSpeed = 0.1f; // initial obstacle speed
+    
+    private float _gameStartTimestamp;
+    [SerializeField] private GameObject obstaclePrefab;
 
     private void Awake()
     {
@@ -23,7 +25,7 @@ public class LevelManager : MonoBehaviour
         {
             Instance = this;
 
-            // Ensures that the Singleton instance retains between scenes
+            // Ensures that the singleton instance retains between scenes
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -32,22 +34,22 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        // Check if the game has started
         if (_gameStarted)
         {
-            ground.transform.Translate(Vector3.down * Time.deltaTime * obstacleSpeed, Space.World);
-
-            if (ground.transform.position.y <= -10)
+            // Don't start moving the ground until 4 seconds into the game
+            if (Time.time >= _gameStartTimestamp + 4f)
             {
-              Destroy(ground);
+                if (ground != null)
+                {
+                    ground.transform.Translate(Vector3.down * Time.deltaTime * obstacleSpeed, Space.World);
+                    
+                    if (ground.transform.position.y <= -10)
+                    {
+                        ObjectPoolManager.Instance.Release(ground);  // Release ground object back into the pool
+                    }
+                } 
             }
         }
     }
@@ -55,6 +57,7 @@ public class LevelManager : MonoBehaviour
     public void StartLevel()
     {
         _gameStarted = true;
+        _gameStartTimestamp = Time.time; // Save the time when the game started
         StartCoroutine(SpawnObstacles());
         StartCoroutine(IncreaseObstacleSpeed());
     }
@@ -63,8 +66,14 @@ public class LevelManager : MonoBehaviour
     {
         while (_gameStarted)
         {
-            var obstacleClone = Instantiate(obstacleWide, GetRandomSpawnPosition());
-            obstacleClone.AddComponent<ObstacleMovement>(); // Assuming the ObstacleMovement script exists and implemented correctly
+            var poppedObstacle = ObjectPoolManager.Instance.Get(obstaclePrefab);
+        
+            if (poppedObstacle != null)
+            {
+                poppedObstacle.transform.position = GetRandomSpawnPosition().position;  // Set the position of the obstacle
+                poppedObstacle.AddComponent<ObstacleMovement>();
+            }
+        
             yield return new WaitForSeconds(spawnInterval);
         }
     }

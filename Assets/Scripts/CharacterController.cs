@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,9 +25,23 @@ public class CharacterController : MonoBehaviour
     private float _momentunMaximumTime = 1f;
     private float _momentumMultiplier = 1.5f;
     private float _streakMultiplier = 1f;
+    private bool _playerIsDead;
+
+    private void Start()
+    {
+        PlayerManager.Instance.PlayerDied.AddListener(OnPlayerDied);    
+    }
+
+    private void OnPlayerDied()
+    {
+        Debug.Log("Player died");
+        _playerIsDead = true;
+    }
 
     private void Update()
     {
+        if (_playerIsDead) return;
+        
         isGrounded = Physics2D.OverlapCircle(feet.position, groundDistance, groundLayer);
         if (isGrounded)
         {

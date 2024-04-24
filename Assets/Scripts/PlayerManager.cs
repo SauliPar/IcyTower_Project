@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -11,6 +13,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Transform playerSpawnPoint;
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private TextMeshProUGUI text;
+    
+    public UnityEvent PlayerDied;
 
     private void Awake()
     {
@@ -81,5 +85,15 @@ public class PlayerManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         StartCoroutine(FadeCanvasGroup(0, 1f)); // Smoothly hide UI Again after countdown
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            text.text = "Wasted";
+            StartCoroutine(FadeCanvasGroup(1, 1f)); // Smoothly hide UI Again after countdown
+            PlayerDied?.Invoke();
+        }
     }
 }
