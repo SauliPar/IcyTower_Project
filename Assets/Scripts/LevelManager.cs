@@ -12,9 +12,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject obstacleWide;
 
     private bool _gameStarted = false;
-    private float spawnInterval = 2.0f; // initial spawn interval
-    private float speedIncreaseInterval = 10.0f; 
-    private float obstacleSpeed = 0.1f; // initial obstacle speed
+    private float spawnInterval = 2f; // initial spawn interval
+    private float speedIncreaseInterval = 5.0f; 
+    // private float obstacleSpeed = 0.2f; // initial obstacle speed
     
     private float _gameStartTimestamp;
     [SerializeField] private GameObject obstaclePrefab;
@@ -39,13 +39,13 @@ public class LevelManager : MonoBehaviour
         if (_gameStarted)
         {
             // Don't start moving the ground until 4 seconds into the game
-            if (Time.time >= _gameStartTimestamp + 4f)
+            if (Time.time >= _gameStartTimestamp + 8f)
             {
                 if (ground != null)
                 {
-                    ground.transform.Translate(Vector3.down * Time.deltaTime * obstacleSpeed, Space.World);
+                    ground.transform.Translate(Vector3.down * Time.deltaTime * .2f, Space.World);
                     
-                    if (ground.transform.position.y <= -10)
+                    if (ground.transform.position.y <= -8)
                     {
                         ObjectPoolManager.Instance.Release(ground);  // Release ground object back into the pool
                     }
@@ -71,7 +71,7 @@ public class LevelManager : MonoBehaviour
             if (poppedObstacle != null)
             {
                 poppedObstacle.transform.position = GetRandomSpawnPosition().position;  // Set the position of the obstacle
-                poppedObstacle.AddComponent<ObstacleMovement>();
+                // poppedObstacle.AddComponent<ObstacleMovement>();
             }
         
             yield return new WaitForSeconds(spawnInterval);
@@ -89,8 +89,12 @@ public class LevelManager : MonoBehaviour
         while (_gameStarted)
         {
             yield return new WaitForSeconds(speedIncreaseInterval);
-            obstacleSpeed += 0.1f;
-            spawnInterval = Mathf.Max(spawnInterval - 0.1f, 0.1f); // subtract 0.1 from spawnInterval every speedIncreaseInterval, but don't let spawnInterval go below 0.1
+            if (ObstacleSpeed <= 5.0f) 
+            {
+                ObstacleSpeed += .2f;  // Increase ObstacleSpeed by 0.2 every interval until it reaches a maximum value of 5.0
+            }
+            
+            // spawnInterval = Mathf.Min(spawnInterval + 0.1f, 3.0f);        
         }
     }
 }

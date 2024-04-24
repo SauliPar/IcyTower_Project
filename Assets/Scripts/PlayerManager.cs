@@ -52,7 +52,7 @@ public class PlayerManager : MonoBehaviour
     {
         Debug.Log("Instantiating Player...");
         Instantiate(playerPrefab, playerSpawnPoint.position, Quaternion.identity);
-        StartCoroutine(FadeCanvasGroup(0, 1f)); // Smoothly hide UI
+        // StartCoroutine(FadeCanvasGroup(0, 1f)); // Smoothly hide UI
         yield return new WaitForSeconds(1); // Wait for a moment when player is instantiated
         StartCoroutine(PerformCountDown(3));
     }
@@ -84,6 +84,7 @@ public class PlayerManager : MonoBehaviour
             
         yield return new WaitForSeconds(1f);
 
+        GameManager.instance.StartTheScore();
         StartCoroutine(FadeCanvasGroup(0, 1f)); // Smoothly hide UI Again after countdown
     }
 
