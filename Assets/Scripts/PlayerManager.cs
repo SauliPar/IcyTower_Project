@@ -35,7 +35,7 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
         canvasGroup.alpha = 1;
-        text.text = "Press F to Spawn";
+        SetMainUIText("Press F to Spawn");
     }
 
     // Update is called once per frame
@@ -57,7 +57,7 @@ public class PlayerManager : MonoBehaviour
         StartCoroutine(PerformCountDown(3));
     }
     
-    IEnumerator FadeCanvasGroup(float targetAlpha, float duration)
+    public IEnumerator FadeCanvasGroup(float targetAlpha, float duration)
     {
         float startAlpha = canvasGroup.alpha;
 
@@ -75,7 +75,7 @@ public class PlayerManager : MonoBehaviour
         while (count > 0)
         {
             yield return new WaitForSeconds(1f);
-            text.text = count.ToString();
+            SetMainUIText(count.ToString());
             count--;
         }
 
@@ -92,9 +92,17 @@ public class PlayerManager : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            text.text = "Wasted";
+            SetMainUIText("Wasted");
             StartCoroutine(FadeCanvasGroup(1, 1f)); // Smoothly hide UI Again after countdown
             PlayerDied?.Invoke();
+        }
+    }
+
+    public void SetMainUIText(string inputText)
+    {
+        if (!string.IsNullOrEmpty(inputText))
+        {
+            text.text = inputText;
         }
     }
 }

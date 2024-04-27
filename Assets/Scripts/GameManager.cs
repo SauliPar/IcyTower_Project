@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -12,6 +13,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI ScoreText;
     private float score;
     private bool isPlayerAlive = false;
+    
+    public UnityEvent StartEndGame;
+    public float WinThreshold = 50;
 
     private void Awake()
     {
@@ -41,6 +45,11 @@ public class GameManager : MonoBehaviour
         {
             score += Time.fixedDeltaTime;
             ScoreText.text = "Score: " + Mathf.Round(score).ToString();
+
+            if (score >= WinThreshold)
+            {
+                StartEndGame?.Invoke();
+            }
         }
     }
 
@@ -65,5 +74,14 @@ public class GameManager : MonoBehaviour
 
         // Reloads the current active scene
         SceneManager.LoadScene(currentScene.name);
+    }
+
+    public void LevelCompleted()
+    {
+        isPlayerAlive = false;
+        ScoreText.color = Color.green;
+        ScoreText.fontSize += 15; // increase size by 10
+        Debug.Log("You won!");
+        Invoke(nameof(ResetGame), 5f);
     }
 }

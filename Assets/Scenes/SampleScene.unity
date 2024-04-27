@@ -347,6 +347,7 @@ MonoBehaviour:
   - {fileID: 1411260252}
   obstacleWide: {fileID: 5965710971733125184, guid: 0b3c7bcb41193884485f7b3c51ae647e, type: 3}
   obstaclePrefab: {fileID: 5965710971733125184, guid: 0b3c7bcb41193884485f7b3c51ae647e, type: 3}
+  endPlatform: {fileID: 830369403009201734, guid: 64708c33f42533144985eb0ea91534c5, type: 3}
 --- !u!1001 &481415923
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1831,6 +1832,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ScoreText: {fileID: 1481044000}
+  StartEndGame:
+    m_PersistentCalls:
+      m_Calls: []
+  WinThreshold: 50
 --- !u!1 &2146524595
 GameObject:
   m_ObjectHideFlags: 0

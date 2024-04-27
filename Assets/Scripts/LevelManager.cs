@@ -10,6 +10,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject ground;
     [SerializeField] private List<Transform> obstacleSpawnTransforms;
     [SerializeField] private GameObject obstacleWide;
+    [SerializeField] private GameObject obstaclePrefab;
+    [SerializeField] private GameObject endPlatform;
 
     private bool _gameStarted = false;
     private float spawnInterval = 2f; // initial spawn interval
@@ -17,7 +19,7 @@ public class LevelManager : MonoBehaviour
     // private float obstacleSpeed = 0.2f; // initial obstacle speed
     
     private float _gameStartTimestamp;
-    [SerializeField] private GameObject obstaclePrefab;
+    private bool _gameIsEnding;
 
     private void Awake()
     {
@@ -60,6 +62,12 @@ public class LevelManager : MonoBehaviour
         _gameStartTimestamp = Time.time; // Save the time when the game started
         StartCoroutine(SpawnObstacles());
         StartCoroutine(IncreaseObstacleSpeed());
+        GameManager.instance.StartEndGame.AddListener(HandleEndGame);    
+    }
+
+    private void HandleEndGame()
+    {
+        _gameIsEnding = true;
     }
 
     private IEnumerator SpawnObstacles() 
@@ -67,14 +75,26 @@ public class LevelManager : MonoBehaviour
         while (_gameStarted)
         {
             var poppedObstacle = ObjectPoolManager.Instance.Get(obstaclePrefab);
+            
+            if (_gameIsEnding)
+            {
+                poppedObstacle = ObjectPoolManager.Instance.Get(endPlatform);
+            }
         
             if (poppedObstacle != null)
             {
                 poppedObstacle.transform.position = GetRandomSpawnPosition().position;  // Set the position of the obstacle
                 // poppedObstacle.AddComponent<ObstacleMovement>();
             }
-        
-            yield return new WaitForSeconds(spawnInterval);
+
+            if (!_gameIsEnding)
+            {
+                yield return new WaitForSeconds(spawnInterval);
+            }
+            else
+            {
+                yield return new WaitForSeconds(50);
+            }
         }
     }
 
@@ -89,9 +109,9 @@ public class LevelManager : MonoBehaviour
         while (_gameStarted)
         {
             yield return new WaitForSeconds(speedIncreaseInterval);
-            if (ObstacleSpeed <= 5.0f) 
+            if (ObstacleSpeed <= 4.0f) 
             {
-                ObstacleSpeed += .2f;  // Increase ObstacleSpeed by 0.2 every interval until it reaches a maximum value of 5.0
+                ObstacleSpeed += .2f;  // Increase ObstacleSpeed by 0.2 every interval until it reaches a maximum value of 4.0
             }
             
             // spawnInterval = Mathf.Min(spawnInterval + 0.1f, 3.0f);        

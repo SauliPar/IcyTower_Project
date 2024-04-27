@@ -78,7 +78,7 @@ public class CharacterController : MonoBehaviour
 
             if (_momentumMultiplier > 1f)
             {
-                if (_streakMultiplier <= 1.5f)
+                if (_streakMultiplier <= 1.25f)
                 {
                     // Debug.Log("streakki nousi");
                     _streakMultiplier += 0.05f;
