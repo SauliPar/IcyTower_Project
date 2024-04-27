@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour
     {
         isPlayerAlive = false;
         ScoreText.color = Color.green;
-        ScoreText.fontSize += 15; // increase size by 10
+        ScoreText.fontSize += 5; // increase size by 5
         Debug.Log("You won!");
         Invoke(nameof(ResetGame), 5f);
     }
